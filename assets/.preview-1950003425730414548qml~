@@ -1,0 +1,138 @@
+import bb.cascades 1.0
+
+Page {
+    //Enables keyboard popup on launch
+    property variant appScene: Application.scene
+
+    //    //Swipe from top menu
+    //    Menu.definition: MenuDefinition {
+    //        // Specify the actions that should be included in the menu
+    //        actions: [
+    //            ActionItem {
+    //                title: "About"
+    //                imageSource: "ic_info.png"
+    //
+    //                onTriggered: {
+    //
+    //                }
+    //            }
+    //        ] // end of actions list
+    //    } // end of MenuDefinition
+
+    //Overall Container
+    Container {
+        layout: StackLayout {
+            orientation: LayoutOrientation.TopToBottom
+        }
+        background: Color.create("#262626");
+
+        //Header Container
+        Container {
+            id: headerContainer
+            layout: StackLayout {
+                orientation: LayoutOrientation.LeftToRight
+            }
+            horizontalAlignment: HorizontalAlignment.Fill
+            verticalAlignment: VerticalAlignment.Top
+            background: Color.create("#191919")
+            leftPadding: 30
+            rightPadding: 30
+
+            //Welcome Text Container
+            Container {
+                id: welcomeTextContainer
+                topPadding: 20
+                bottomPadding: 20
+                leftPadding: 20
+
+                opacity: 0.93
+                Label {
+                    text: "NexTransit Vancouver"
+
+                    textStyle.color: Color.White
+                    textStyle.fontSize: FontSize.XLarge
+                    textStyle.fontWeight: FontWeight.W500
+                    textStyle.fontSizeValue: 4.0
+                }
+            }
+        }
+
+        //Text/Button Container
+        Container {
+            background: Color.create("#262626")
+            leftPadding: 50.0
+            rightPadding: 50.0
+            topPadding: 15
+            layout: StackLayout {
+                orientation: LayoutOrientation.LeftToRight
+            }
+
+            // A standard TextField for the RSS url
+            TextField {
+                id: stopNumber
+                verticalAlignment: VerticalAlignment.Center
+                inputMode: TextFieldInputMode.Pin
+                hintText: "Stop Number"
+                input.submitKeyFocusBehavior: SubmitKeyFocusBehavior.Lose
+                textStyle.fontSize: FontSize.Medium
+                focusPolicy: FocusPolicy.KeyAndTouch
+                text: ""
+
+                input {
+                    submitKey: SubmitKey.Search
+                    onSubmitted: {
+                        _rssListing.url = "http://api.translink.ca/rttiapi/v1/stops/" + stopNumber.text + "/estimates?count=3&timeframe=300&apikey=27uPH7Ummwe5W0s5CRrn";
+                        _rssListing.fetch()
+                    }
+                }
+            }
+
+            // Button to offer alternative way to search
+            Button {
+                horizontalAlignment: HorizontalAlignment.Center
+                verticalAlignment: VerticalAlignment.Center
+                leftMargin: 10
+                maxWidth: 10
+                layoutProperties: StackLayoutProperties {
+                    spaceQuota: -1
+                }
+                //Probably not necessary
+                enabled: ! _rssListing.active
+                imageSource: "Search.png"
+
+                // Fetch news items on click
+                onClicked: {
+                    _rssListing.url = "http://api.translink.ca/rttiapi/v1/stops/" + stopNumber.text + "/estimates?count=3&timeframe=300&apikey=27uPH7Ummwe5W0s5CRrn";
+                    _rssListing.fetch()
+                }
+            }
+        }
+
+        //Result Output Container
+        Container {
+            id: resultContainer
+            horizontalAlignment: HorizontalAlignment.Fill
+            verticalAlignment: VerticalAlignment.Fill
+
+            leftPadding: 50.0
+            rightPadding: 30.0
+
+            // A standard TextArea for displaying items
+            TextArea {
+                editable: false
+
+                text: _rssListing.feeds
+                textStyle.fontSize: FontSize.Large
+                textStyle {
+                    color: Color.White
+                }
+            }
+        }
+    }
+
+    //Detects QML loading and shows keyboard on launch
+    onAppSceneChanged: {
+        stopNumber.requestFocus()
+        _rssListing.showVirtualKeyboard();
+    }
+}

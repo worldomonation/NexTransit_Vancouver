@@ -1,0 +1,17 @@
+[
+    {
+        "busNumber" : "320",
+        "desination" : "FLEETWOOD",
+        "leaveTime" : "7:42pm"
+    },
+    {
+        "busNumber" : "320",
+        "desination" : "LANGLEY CTR",
+        "leaveTime" : "7:45pm"
+    },
+    {
+        "busNumber" : "320",
+        "desination" : "FLEETWOOD",
+        "leaveTime" : "8:42pm"
+    }
+]
